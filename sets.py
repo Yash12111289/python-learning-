@@ -6,7 +6,7 @@ print(type(s))
 # {(1, 2), (3, 4)}   # tuple is immutabl
 s=set()
 print(type(s))
-s={1,2,3,4,5,6,7,8,(1,2),(1,2,3)}
+s={1,2,3,4,5,6,7,8,(1,2),(1,2,3)}#dont have index
 s.add(10)
 print(s)
 s.update([20,21])#adds iterable elements not list 
@@ -14,7 +14,7 @@ print(s)
 s.remove(1)#throws error if not present
 s.discard(1)#if element not present dont give error
 print(s)
-print(s.pop())
+print(s.pop())#returns arbitrary element
 s.clear()
 del s
 s={1}
@@ -43,4 +43,5 @@ f=frozenset([1,2,3,4,5])
 print(f)
 # Immutable set
 # Can be dictionary key
+
 # Can be element of another set
