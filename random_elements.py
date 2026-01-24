@@ -16,6 +16,8 @@ print(rand.sample(my_list, 2))#no duplicates in selection
 
 print(rand.choices(my_list, k=5))#duplication allowed
 
-print(rand.shuffle(li))
+rand.shuffle(li)
+print(li)
 
-print(rand.seed(10))
+rand.seed(1)#will tells how many time a number can be repeated
+print([rand.randint(1,100) for _ in range(10)])
