@@ -1,189 +1,110 @@
-"""
-PYTHON FILE SYSTEM – RUNNING NOTES (7 → 20)
-------------------------------------------
-This script demonstrates:
-- Listing files
-- Walking directories
-- Delete / Rename / Move
-- Copy files
-- Path handling
-- pathlib usage
-- Permissions
-- Metadata
-- Glob search
-- Temp files
-- Exception handling
-- Binary files
-- Best practices
-- Real-world examples
-"""
+import os
+print(os.getcwd())
+print(os.chdir(r'C:\Users\yaswa\Downloads'))
+print(os.getcwd())
+print(os.listdir())#list of dirctories
+os.mkdir('hello')
+os.rmdir('hello')
+os.chdir(r'C:\Users\yaswa\Downloads\python')
+# os.remove('file.txt')
+# os.rename('old.txt','new.txt')
+
+#file path
+
+# os.path.join('downloads','file.txt')
+print(os.path.exists(r'C:\Users\yaswa\Downloads\python\file_handling.py'))
+print(os.path.isfile(r'C:\Users\yaswa\Downloads\python\file_handling.py'))
+print(os.path.isdir(r'C:\Users\yaswa\Downloads\python\file_handling.py'))
+print(os.path.getsize(r'C:\Users\yaswa\Downloads\python\file_handling.py'))
+
+
+#biary file
+
+# with open('image.jpg','rb') as f:
+#     print(f.read())
+
+
+#copy file manual
+
+with open('file.txt','r+') as f1, open('file2.txt','r+') as f2:
+    f2.write(f1.read())
+    f2.seek(0)
+    print(f2.read())
+
+#loop in file
+
+with open("file.txt") as f:
+    for line in f:
+        print(line)#print like each line in new line
+
+
+'''-------------------------------------------------------------------------'''
+#modern path handling
+
+from pathlib import Path
+p = Path("file.txt")
+print(p.exists())
+print(p.is_file())
+print(p.read_text())
+p.write_text("Hello")
+
+
+#file encoding
+
+open("file.txt", "r", encoding="utf-8")
+print()
+
+#buffering and flushing
+f=open('file.txt','r+')
+f.write("Hello")
+f.flush()  # force write to disk  Used in logging, real-time apps.
+f.close()
+
+
+#working with large file
+
+with open("file.txt") as f:
+    for line in f:
+        print(line.strip())
+
+#temp files
+
+import tempfile
+with tempfile.TemporaryFile(mode="w+") as f:
+    f.write("test")
+    f.seek(0)
+    print(f.read())#Used in testing & secure operations.
+
+#file permissions
 
 import os
+
+os.chmod("data.txt", 0o644)#used in linus
+
+#high level file ops
+
 import shutil
-import glob
-import tempfile
-from pathlib import Path
-import stat
 
-# ===============================
-# 7️⃣ LIST FILES IN DIRECTORY
-# ===============================
+shutil.copy("a.txt", "b.txt")
+shutil.move("a.txt", "folder/a.txt")#better than manual copying 
+shutil.rmtree("folder")
 
-print("Listing current directory:")
-print(os.listdir("."))  # lists files & folders
+#meory mapped files 
 
-# Recursive directory walk
-print("\nWalking directory tree:")
-for root, dirs, files in os.walk("."):
-    print("ROOT:", root)
-    print("FILES:", files)
-    break  # break to avoid huge output
+import mmap
 
-# ===============================
-# 8️⃣ DELETE / RENAME / MOVE FILE
-# ===============================
+with open("data.txt", "r+") as f:
+    mm = mmap.mmap(f.fileno(), 0)
+    print(mm.readline())# fast access
 
-# create a sample file
-with open("sample.txt", "w") as f:
-    f.write("Hello File System")
 
-# rename file
-os.rename("sample.txt", "renamed.txt")
+#file locking
+import fcntl
 
-# move file
-shutil.move("renamed.txt", "moved.txt")
+fcntl.flock(f, fcntl.LOCK_EX)#important in databases and logs
 
-# delete file
-os.remove("moved.txt")
+#different files
 
-# ===============================
-# 9️⃣ COPY FILES & DIRECTORIES
-# ===============================
-
-with open("a.txt", "w") as f:
-    f.write("Copy me")
-
-shutil.copy("a.txt", "b.txt")  # file copy
-
-os.mkdir("src")
-with open("src/x.txt", "w") as f:
-    f.write("inside folder")
-
-shutil.copytree("src", "dest")  # folder copy
-
-# ===============================
-# 🔟 PATH HANDLING (os.path)
-# ===============================
-
-path = os.path.join("folder", "file.txt")  # OS independent path
-print("\nJoined path:", path)
-print("Base name:", os.path.basename(path))
-print("Dir name:", os.path.dirname(path))
-print("Absolute:", os.path.abspath(path))
-
-# ===============================
-# 1️⃣1️⃣ pathlib (MODERN WAY)
-# ===============================
-
-p = Path("note.txt")
-p.write_text("Using pathlib")
-print("\nPathlib read:", p.read_text())
-
-# create nested dirs
-Path("a/b/c").mkdir(parents=True, exist_ok=True)
-
-# iterate files
-print("Iterating current dir using pathlib:")
-for file in Path(".").iterdir():
-    print(file)
-
-# ===============================
-# 1️⃣2️⃣ FILE PERMISSIONS
-# ===============================
-
-# chmod (read/write/execute)
-os.chmod("note.txt", 0o644)  # rw-r--r--
-
-# ===============================
-# 1️⃣3️⃣ FILE METADATA
-# ===============================
-
-info = os.stat("note.txt")
-print("\nFile size:", info.st_size)
-print("Last modified:", info.st_mtime)
-
-# ===============================
-# 1️⃣4️⃣ SEARCH FILES (glob)
-# ===============================
-
-print("\nText files:", glob.glob("*.txt"))
-print("Recursive python files:", glob.glob("**/*.py", recursive=True))
-
-# ===============================
-# 1️⃣5️⃣ TEMPORARY FILES
-# ===============================
-
-with tempfile.NamedTemporaryFile(delete=False) as tmp:
-    tmp.write(b"Temporary data")
-    print("\nTemp file created:", tmp.name)
-
-# ===============================
-# 1️⃣6️⃣ EXCEPTION HANDLING
-# ===============================
-
-try:
-    with open("missing.txt") as f:
-        print(f.read())
-except FileNotFoundError:
-    print("Handled: File not found")
-except PermissionError:
-    print("Handled: Permission denied")
-
-# ===============================
-# 1️⃣7️⃣ BINARY FILE HANDLING
-# ===============================
-
-with open("binary.bin", "wb") as f:
-    f.write(b"\x00\x01\x02")
-
-with open("binary.bin", "rb") as f:
-    print("Binary content:", f.read())
-
-# ===============================
-# 1️⃣8️⃣ BEST PRACTICES (SHOWN)
-# ===============================
-# ✔ with open()
-# ✔ pathlib
-# ✔ exception handling
-# ✔ no hard-coded separators
-
-# ===============================
-# 1️⃣9️⃣ REAL-WORLD EXAMPLES
-# ===============================
-
-# count lines in file
-with open("a.txt") as f:
-    line_count = sum(1 for _ in f)
-print("\nLine count in a.txt:", line_count)
-
-# copy only .txt files to backup
-Path("backup").mkdir(exist_ok=True)
-for file in Path(".").glob("*.txt"):
-    shutil.copy(file, "backup")
-
-# ===============================
-# 2️⃣0️⃣ INTERVIEW SUMMARY (CODED)
-# ===============================
-
-summary = {
-    "read/write": "open()",
-    "paths": "pathlib",
-    "copy/move": "shutil",
-    "search": "glob",
-    "metadata": "os.stat",
-    "temp": "tempfile"
-}
-
-print("\nInterview summary:", summary)
-
-print("\n--- END OF FILE SYSTEM NOTES ---")
+import json
+with open('file.json','r+') as f:
+    print(json.load(f))

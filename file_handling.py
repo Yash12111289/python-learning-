@@ -1,11 +1,3 @@
-# Module	  Purpose
-# os	      Low-level OS & file system ops
-# os.path	  Path manipulation
-# pathlib	  Modern, object-oriented paths ✅
-# shutil	  High-level file operations
-# glob	      Pattern-based file search
-# tempfile	  Temporary files
-# stat	      File permissions & metadata
 
 
 f=open("file.txt",'w')
@@ -37,24 +29,25 @@ with open('file.txt','r+') as f:
     f.seek(0)#points to the starting
     lines=f.readlines()#convert lines to lists
     print(lines)
-
-    
-import os
-print(os.getcwd())#current working directory(cwd)-file path
-
-print(os.path.exists("file.txt"))
-print(os.path.isfile("file.txt"))
-print(os.path.isdir(r"C:\Users\yaswa\Downloads\python"))#here 'r' will helps as excape sequence like if any type of string error occurs
-print(os.path.getsize("file.txt"))
-print(os.path.abspath("file.txt"))
-
-os.mkdir("dir1")
-os.makedirs("a/b/c", exist_ok=True)
-
-import shutil
-os.rmdir("dir1")           # empty only
-shutil.rmtree("a")         # force delete
-
-os.listdir(".")
-
-
+#reading
+f=open('file.txt','r+')
+print(f.read())
+f.seek(0)
+print(f.read(10))
+f.seek(0)
+print(f.readline())
+f.seek(0)
+print(f.readlines())
+# writing
+f.seek(0)
+f.write('hello yash')#deletes the exiting
+li=['hi ','how ','are ','you']
+f.writelines(li)
+f.seek(0)
+print(f.read())
+f.seek(0)
+#append
+f=open('file.txt','a')
+f.write('codegnan')
+print(f.name,f.mode,f.closed)
+f.close()
